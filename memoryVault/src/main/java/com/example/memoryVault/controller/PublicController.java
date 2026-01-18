@@ -6,6 +6,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -23,9 +25,14 @@ public class PublicController {
     @Autowired
     private UserService userService;
 
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @PostMapping("/signup")
     public ResponseEntity<?> userSignup(@RequestBody User user){
         try{
+            String oldPlainPassword = user.getPassword();
+            String encodedPassword = passwordEncoder.encode(oldPlainPassword);
+            user.setPassword(encodedPassword);
             user.setRoles(Arrays.asList("USER"));
             user.setCreatedAt(LocalDateTime.now());
             userService.saveUser(user);
