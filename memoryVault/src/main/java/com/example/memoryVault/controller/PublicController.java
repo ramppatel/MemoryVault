@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
 @RestController
 @RequestMapping("/public")
 public class PublicController {
@@ -23,6 +26,8 @@ public class PublicController {
     @PostMapping("/signup")
     public ResponseEntity<?> userSignup(@RequestBody User user){
         try{
+            user.setRoles(Arrays.asList("USER"));
+            user.setCreatedAt(LocalDateTime.now());
             userService.saveUser(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
