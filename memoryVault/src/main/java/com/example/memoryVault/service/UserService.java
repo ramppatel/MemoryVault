@@ -10,23 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class UserService {
-
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional
     public void saveUser(User user){
-        try{
-            userRepository.save(user);
-        }
-        catch(Exception e){
-            log.error("Exception Occurred During Saving new User : ", e);
-        }
+        userRepository.save(user);
     }
 
-    public User findByUserName(String userName){
+    public User getUser(String userName){
         return userRepository.findByUserName(userName);
     }
 
+    public void deleteUser(String userName){
+        userRepository.deleteByUserName(userName);
+    }
 
 }
