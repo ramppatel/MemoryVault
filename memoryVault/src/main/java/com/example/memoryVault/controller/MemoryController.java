@@ -81,14 +81,40 @@ public class MemoryController {
 
             boolean deleted = memoryService.deleteMemoryById(id, user.getId());
 
-            if (deleted) {
+            if(deleted){
                 return new ResponseEntity<>("Memory deleted successfully", HttpStatus.OK);
-            } else {
+            }
+            else{
                 return new ResponseEntity<>("Memory not found or not authorized", HttpStatus.NOT_FOUND);
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             return new ResponseEntity<>("Something Went Wrong !!!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateMemory(@PathVariable ObjectId id, @RequestBody Memory updatedMemory) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userName = authentication.getName();
+
+            User user = userService.getUser(userName);
+
+            Optional<Memory> memoryOpt =
+                    memoryService.updateMemoryById(id, user.getId(), updatedMemory);
+
+            if (memoryOpt.isPresent()) {
+                return new ResponseEntity<>(memoryOpt.get(), HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>("Memory not found or not authorized", HttpStatus.NOT_FOUND);
+
+        }
+        catch(Exception e){
+            return new ResponseEntity<>("Something Went Wrong !!!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

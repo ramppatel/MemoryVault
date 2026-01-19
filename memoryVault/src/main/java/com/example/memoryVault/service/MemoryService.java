@@ -39,4 +39,23 @@ public class MemoryService {
         return false;
     }
 
+    public Optional<Memory> updateMemoryById(ObjectId memoryId, ObjectId userId, Memory updatedMemory) {
+        Optional<Memory> existingOpt = memoryRepository.findByIdAndUserId(memoryId, userId);
+
+        if (existingOpt.isPresent()) {
+            Memory existing = existingOpt.get();
+
+            // Update only allowed fields
+            existing.setTitle(updatedMemory.getTitle());
+            existing.setContent(updatedMemory.getContent());
+            existing.setTags(updatedMemory.getTags());
+            existing.setMood(updatedMemory.getMood());
+
+            // Do NOT update id, userId, createdAt
+            return Optional.of(memoryRepository.save(existing));
+        }
+
+        return Optional.empty();
+    }
+
 }
